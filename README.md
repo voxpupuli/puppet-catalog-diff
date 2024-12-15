@@ -20,7 +20,7 @@
 1. [Module Description](#module-description)
 1. [Setup](#setup)
     1. [Set up node discovery](#set-up-node-discovery)
-    1. [Set up auth.conf](#set-up-auth-conf)
+    1. [Set up auth.conf](#set-up-authconf)
 1. [Usage](#usage)
     1. [Multi threaded compile requests](#multi-threaded-compile-requests)
     1. [Fact search](#fact-search)
