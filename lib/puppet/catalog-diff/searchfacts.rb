@@ -77,8 +77,8 @@ module Puppet::CatalogDiff
           json_query = URI.encode_www_form_component(query.to_json)
           result = Puppet.runtime[:http].get(URI("#{puppetdb}/pdb/query/v4/nodes?query=#{json_query}"), headers: headers)
         end
-        filtered = PSON.parse(result.body)
-      rescue PSON::ParserError => e
+        filtered = JSON.parse(result.body)
+      rescue JSON::ParserError => e
         raise "Error parsing json output of puppet search: #{e.message}"
       end
       filtered.map { |node| node['certname'] }

@@ -22,9 +22,9 @@ module Puppet::CatalogDiff
                   clean_nested_sensitive_parameters!(catalog)
                   catalog
                 end
-      catalog = render_pson(catalog)
+      catalog = render_json(catalog)
       begin
-        save_catalog_to_disk(save_directory, node_name, catalog, 'pson')
+        save_catalog_to_disk(save_directory, node_name, catalog, 'json')
       rescue Exception => e
         Puppet.err("Server returned invalid catalog for #{node_name}")
         save_catalog_to_disk(save_directory, node_name, catalog, 'error')
@@ -60,8 +60,8 @@ module Puppet::CatalogDiff
       raise "HTTP request to PuppetDB failed with: HTTP #{ret.code} - #{ret.reason}" unless ret.success?
 
       begin
-        catalog = PSON.parse(ret.body)
-      rescue PSON::ParserError => e
+        catalog = JSON.parse(ret.body)
+      rescue JSON::ParserError => e
         raise "Error parsing json output of puppetdb catalog query for #{node_name}: #{e.message}\ncontent: #{ret.body}"
       end
 
@@ -75,7 +75,7 @@ module Puppet::CatalogDiff
       server, port = server.split(':')
       port ||= '8140'
       headers = {
-        'Accept' => 'pson',
+        'Accept' => 'application/json',
       }
 
       if certless
@@ -122,8 +122,8 @@ module Puppet::CatalogDiff
       end
 
       begin
-        catalog = PSON.parse(ret.body)
-      rescue PSON::ParserError => e
+        catalog = JSON.parse(ret.body)
+      rescue JSON::ParserError => e
         raise "Error parsing json output of puppet catalog query for #{node_name}: #{e.message}. Content: #{ret.body}"
       end
       raise catalog['message'] if catalog.key?('issue_kind')
@@ -132,11 +132,11 @@ module Puppet::CatalogDiff
       catalog
     end
 
-    def render_pson(catalog)
-      pson = PSON.pretty_generate(catalog, allow_nan: true, max_nesting: false)
-      raise "Could not render catalog as pson, #{catalog}" unless pson
+    def render_json(catalog)
+      json = JSON.pretty_generate(catalog, allow_nan: true, max_nesting: false)
+      raise "Could not render catalog as json, #{catalog}" unless json
 
-      pson
+      json
     end
 
     def clean_sensitive_parameters!(catalog)
